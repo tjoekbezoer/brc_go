@@ -5,12 +5,18 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"sort"
 	"strconv"
 )
 
+type Station2 struct {
+	min, max, sum float64
+	num           int
+}
+
 func m2(file io.Reader, dst io.Writer) {
-	stations := map[string]*Station{}
+	stations := map[string]*Station2{}
 
 	buf := make([]byte, 1024*1024*10)
 	skipNum := 0
@@ -24,11 +30,11 @@ func m2(file io.Reader, dst io.Writer) {
 		}
 
 		chunk := buf[:skipNum+n]
+
 		newline := bytes.LastIndexByte(chunk, '\n')
 		if newline == -1 {
 			log.Panic("Huh?")
 		}
-
 		remainder := chunk[newline+1:]
 		chunk = chunk[:newline+1]
 
@@ -48,7 +54,7 @@ func m2(file io.Reader, dst io.Writer) {
 					s.sum += val
 					s.num++
 				} else {
-					stations[station] = &Station{val, val, val, 1}
+					stations[station] = &Station2{val, val, val, 1}
 				}
 
 				isTemp = false
@@ -71,18 +77,19 @@ func m2(file io.Reader, dst io.Writer) {
 	}
 	sort.Sort(sort.StringSlice(result))
 
-	dst.Write([]byte("{ "))
+	dst.Write([]byte("{"))
 	for i, name := range result {
-		station := stations[name]
-		mean := float64(station.sum) / float64(station.num) / 10
-		var prefix, suffix []byte
+		s := stations[name]
+		minTemp := float64(s.min) / 10
+		// math.Round and `+ -0` to tackle a situation where the mean is a very
+		// small fraction, that will result in a -0.0 in the Sprintf below.
+		meanTemp := (math.Round(float64(s.sum)/float64(s.num)) + -0) / 10
+		maxTemp := float64(s.max) / 10
 
-		if i < len(result)-1 {
-			suffix = []byte(", ")
+		if i > 0 {
+			dst.Write([]byte(", "))
 		}
-		dst.Write([]byte(fmt.Sprintf("%s%v=%.1f/%.1f/%.1f%s", prefix, name, float64(station.min)/10, mean, float64(station.max)/10, suffix)))
+		dst.Write([]byte(fmt.Sprintf("%v=%.1f/%.1f/%.1f", name, minTemp, meanTemp, maxTemp)))
 	}
-	dst.Write([]byte(" }"))
-
-	fmt.Println(result[:10])
+	dst.Write([]byte("}"))
 }

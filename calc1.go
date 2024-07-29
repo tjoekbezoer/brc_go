@@ -10,11 +10,6 @@ import (
 	"os"
 )
 
-type Station struct {
-	min, max, sum float64
-	num           int
-}
-
 func main() {
 	pf, err := os.Create("calc1.prof")
 	if err != nil {

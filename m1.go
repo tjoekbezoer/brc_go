@@ -5,10 +5,16 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
 )
+
+type Station struct {
+	min, max, sum float64
+	num           int
+}
 
 func m1(file io.Reader, dst io.Writer) {
 	stations := map[string]*Station{}
@@ -16,7 +22,7 @@ func m1(file io.Reader, dst io.Writer) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		station, temp, found := strings.Cut(line, ";")
+		stationName, temp, found := strings.Cut(line, ";")
 		if !found {
 			log.Panic("Huh?")
 		}
@@ -26,13 +32,13 @@ func m1(file io.Reader, dst io.Writer) {
 			log.Panic(err)
 		}
 
-		if s, ok := stations[station]; ok {
+		if s, ok := stations[stationName]; ok {
 			s.min = min(s.min, val)
 			s.max = max(s.max, val)
 			s.sum += val
 			s.num++
 		} else {
-			stations[station] = &Station{val, val, val, 1}
+			stations[stationName] = &Station{val, val, val, 1}
 		}
 	}
 
@@ -47,18 +53,18 @@ func m1(file io.Reader, dst io.Writer) {
 	}
 	sort.Sort(sort.StringSlice(result))
 
-	dst.Write([]byte("{ "))
+	dst.Write([]byte("{"))
 	for i, name := range result {
-		station := stations[name]
-		mean := float64(station.sum) / float64(station.num) / 10
-		var prefix, suffix []byte
+		s := stations[name]
+		minTemp := float64(s.min) / 10
+		meanTemp := (math.Round(float64(s.sum)/float64(s.num)) + -0) / 10
+		maxTemp := float64(s.max) / 10
+		var prefix []byte
 
-		if i < len(result)-1 {
-			suffix = []byte(", ")
+		if i > 0 {
+			prefix = []byte(", ")
 		}
-		dst.Write([]byte(fmt.Sprintf("%s%v=%.1f/%.1f/%.1f%s", prefix, name, float64(station.min)/10, mean, float64(station.max)/10, suffix)))
+		dst.Write([]byte(fmt.Sprintf("%s%v=%.1f/%.1f/%.1f", prefix, name, minTemp, meanTemp, maxTemp)))
 	}
-	dst.Write([]byte(" }"))
-
-	fmt.Println(result[:10])
+	dst.Write([]byte("}"))
 }
