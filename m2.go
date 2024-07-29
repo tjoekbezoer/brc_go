@@ -36,7 +36,7 @@ func m2(file io.Reader, dst io.Writer) {
 		var temp []byte
 		var stationName []byte
 		for _, ch := range chunk {
-			if ch == ';' || ch == '.' {
+			if ch == ';' || (isTemp && ch == '.') {
 				isTemp = true
 			} else if ch == 10 {
 				station := string(stationName)
