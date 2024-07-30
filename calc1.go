@@ -1,7 +1,8 @@
 package main
 
 import (
-	"io"
+	"fmt"
+	"strings"
 
 	// _ "net/http/pprof"
 	"runtime/pprof"
@@ -25,12 +26,17 @@ func main() {
 	defer file.Close()
 
 	// Write out station data based on the sorted name slice
-	dst := io.Discard
+	// dst := io.Discard
+
 	// dst, err := os.Create("result.txt")
 	// defer func() { dst.Close() }()
-	if err != nil {
-		log.Panic(err)
-	}
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
 
-	m1(file, dst)
+	dst := &strings.Builder{}
+
+	m3(file, dst)
+
+	fmt.Println(dst.String())
 }
