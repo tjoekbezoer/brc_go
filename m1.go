@@ -56,9 +56,9 @@ func m1(file io.Reader, dst io.Writer) {
 	dst.Write([]byte("{"))
 	for i, name := range result {
 		s := stations[name]
-		minTemp := float64(s.min) / 10
-		meanTemp := (math.Round(float64(s.sum)/float64(s.num)) + -0) / 10
-		maxTemp := float64(s.max) / 10
+		minTemp := float64(s.min)
+		meanTemp := (math.Round(float64(s.sum)/float64(s.num)*10) + -0) / 10
+		maxTemp := float64(s.max)
 		var prefix []byte
 
 		if i > 0 {
