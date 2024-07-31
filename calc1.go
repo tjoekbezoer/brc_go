@@ -1,14 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"strings"
-
-	// _ "net/http/pprof"
-	"runtime/pprof"
-
+	"bufio"
 	"log"
 	"os"
+	"runtime/pprof"
 )
 
 func main() {
@@ -16,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	// runtime.SetBlockProfileRate(1)
 	pprof.StartCPUProfile(pf)
 	defer pprof.StopCPUProfile()
 
@@ -34,9 +31,11 @@ func main() {
 	// 	log.Panic(err)
 	// }
 
-	dst := &strings.Builder{}
+	// dst := &strings.Builder{}
+	dst := bufio.NewWriter(os.Stdout)
 
 	m3(file, dst)
 
-	fmt.Println(dst.String())
+	// fmt.Println(dst.String())
+	dst.Flush()
 }
