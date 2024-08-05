@@ -23,21 +23,11 @@ func main() {
 	}
 	defer file.Close()
 
-	// Write out station data based on the sorted name slice
 	// dst := io.Discard
-
-	// dst, err := os.Create("result.txt")
-	// defer func() { dst.Close() }()
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-
 	dst := &strings.Builder{}
 	// dst := bufio.NewWriter(os.Stdout)
 
 	m4(file, dst)
-	// parts := splitFile(file, 10)
-	// fmt.Printf("%+v\n", parts)
 
 	fmt.Println(dst.String())
 	// dst.Flush()

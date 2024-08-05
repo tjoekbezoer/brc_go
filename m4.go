@@ -121,12 +121,15 @@ func processPart(fileName string, p part, output chan map[string]*Station4) {
 }
 
 func splitFile(file *os.File, numParts int) []part {
-	// Call Stat, use size to calculate partsize
 	fi, err := file.Stat()
 	if err != nil {
 		log.Panic(err)
 	}
 
+	// Split the file into equal parts. In every part, we
+	// will search for the last occurring newline in the last
+	// 100 bytes of the part. The remaining trailing bytes will
+	// be the starting bytes of the next part.
 	fileSize := fi.Size()
 	partSize := fileSize / int64(numParts)
 	offset := int64(0)
@@ -142,7 +145,7 @@ func splitFile(file *os.File, numParts int) []part {
 			}
 			break
 		}
-		// Calc offset: last offset + partsize - searchlen
+
 		searchStart := offset + partSize - searchLen
 		if searchStart < 0 {
 			log.Panic("Huh?")
@@ -154,11 +157,11 @@ func splitFile(file *os.File, numParts int) []part {
 			log.Panic(err)
 		}
 
-		// Reverse search for newline
 		newline := int64(bytes.LastIndexByte(buf, '\n'))
 		if newline < 0 {
 			log.Panic("Huh?")
 		}
+
 		// Next part starts after newline. Size of the current part
 		// should include the newline but obviously not the char after.
 		newOffset := searchStart + newline + 1
