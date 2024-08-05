@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"runtime/pprof"
+	"strings"
 )
 
 func main() {
@@ -31,11 +32,13 @@ func main() {
 	// 	log.Panic(err)
 	// }
 
-	// dst := &strings.Builder{}
-	dst := bufio.NewWriter(os.Stdout)
+	dst := &strings.Builder{}
+	// dst := bufio.NewWriter(os.Stdout)
 
-	m3(file, dst)
+	m4(file, dst)
+	// parts := splitFile(file, 10)
+	// fmt.Printf("%+v\n", parts)
 
-	// fmt.Println(dst.String())
-	dst.Flush()
+	fmt.Println(dst.String())
+	// dst.Flush()
 }
