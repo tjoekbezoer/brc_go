@@ -1,5 +1,8 @@
 package main
 
+// Introduces concurrency to process the input file in multiple
+// goroutines simultaneously.
+
 import (
 	"bufio"
 	"bytes"
@@ -130,10 +133,12 @@ func splitFile(file *os.File, numParts int) []part {
 	// will search for the last occurring newline in the last
 	// 100 bytes of the part. The remaining trailing bytes will
 	// be the starting bytes of the next part.
-	fileSize := fi.Size()
-	partSize := fileSize / int64(numParts)
-	offset := int64(0)
-	searchLen := int64(100)
+	var (
+		fileSize  int64 = fi.Size()
+		partSize  int64 = fileSize / int64(numParts)
+		offset    int64 = 0
+		searchLen int64 = 100
+	)
 
 	parts := make([]part, 0, numParts)
 	buf := make([]byte, searchLen)
