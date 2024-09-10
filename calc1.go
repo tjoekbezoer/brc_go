@@ -27,11 +27,8 @@ func main() {
 	dst := &strings.Builder{}
 	// dst := bufio.NewWriter(os.Stdout)
 
-	m4(file, dst)
+	m5(file, dst)
 	result := dst.String()
-
-	// avg, err := os.Open("averages.txt")
-	// targetData, _ := io.ReadAll(avg)
 
 	// fmt.Println(strings.Compare(result, string(targetData)))
 	fmt.Println(result)
