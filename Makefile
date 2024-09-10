@@ -2,6 +2,9 @@ build:
 	go build -o calc
 
 run: build
+	./calc 2>&1 | less
+
+time: build
 	# time ./calc
 	hyperfine --warmup 3 './calc'
 
