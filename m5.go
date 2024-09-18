@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"math"
 	"os"
 	"runtime"
@@ -35,7 +34,7 @@ func m5(file *os.File, dst io.Writer) {
 		for s := range partResult.Sorted() {
 			err := hash.Set([]byte(s.Name), s.Min, s.Max, s.Sum, s.Num)
 			if err != nil {
-				log.Panic(err)
+				panic(err)
 			}
 		}
 	}
@@ -61,11 +60,11 @@ func m5(file *os.File, dst io.Writer) {
 func processPart5(fileName string, p part, output chan *stations.Map) {
 	file, err := os.Open(fileName)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	if _, err := file.Seek(p.offset, io.SeekStart); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	partReader := io.LimitReader(file, p.size)
@@ -75,22 +74,25 @@ func processPart5(fileName string, p part, output chan *stations.Map) {
 		line := scanner.Bytes()
 		stationName, tempStr, found := bytes.Cut(line, []byte(";"))
 		if !found {
-			log.Panic("Huh?")
+			panic("Huh?")
 		}
 
 		// TODO: Improve performance by handrolling conversion?
 		temp, err := strconv.ParseFloat(string(tempStr), 64)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 
 		// Repeating temp 3 times seems unnecessary, but this function
 		// is also used up top to union all parts together. In that case
 		// the values for all parameters will be different.
-		hash.Set(stationName, temp, temp, temp, 1)
+		err = hash.Set(stationName, temp, temp, temp, 1)
+		if err != nil {
+			panic(err)
+		}
 	}
 	if err := scanner.Err(); err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	output <- hash
