@@ -34,7 +34,7 @@ func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error
 	// since the challenge states that there is a maximum of 10.000
 	// different station names.
 	if s.len > 11000 {
-		return errors.New("Too many stations in hash map")
+		return errors.New("too many stations in hash map")
 	}
 
 	hash := fnv.New64()
@@ -52,7 +52,7 @@ func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error
 	}
 
 	if limit == 0 {
-		return fmt.Errorf("Collision limit reached for %s", name)
+		return fmt.Errorf("collision limit reached for %s", name)
 	}
 
 	if s.items[bucket] == nil {

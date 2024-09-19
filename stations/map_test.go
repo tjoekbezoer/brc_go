@@ -6,7 +6,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	hash := New()
+	hash := NewMap()
 	hash.Set([]byte("test"), 1, 1, 1, 1)
 	res, err := hash.Get([]byte("test"))
 
