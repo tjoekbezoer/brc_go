@@ -13,7 +13,7 @@ const BucketSize = 1 << 14
 
 type Station struct {
 	Name          []byte
-	Min, Max, Sum float64
+	Min, Max, Sum int
 	Num           int
 }
 
@@ -31,7 +31,7 @@ func NewMap() *Map {
 	return stations
 }
 
-func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error {
+func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp int, num int) error {
 	// Arbitrary limit to the amount of stations this map can contain,
 	// since the challenge states that there is a maximum of 10.000
 	// different station names.

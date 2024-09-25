@@ -27,7 +27,7 @@ func main() {
 	dst := &strings.Builder{}
 	// dst := bufio.NewWriter(os.Stdout)
 
-	m5(file, dst)
+	m6(file, dst)
 	result := dst.String()
 
 	// fmt.Println(strings.Compare(result, string(targetData)))
