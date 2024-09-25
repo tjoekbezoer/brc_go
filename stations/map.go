@@ -9,6 +9,8 @@ import (
 	"slices"
 )
 
+const BucketSize = 1 << 14
+
 type Station struct {
 	Name          []byte
 	Min, Max, Sum float64
@@ -24,7 +26,7 @@ func NewMap() *Map {
 	// Create a slice that will hold all the possible stations
 	// the input file can contain.
 	stations := &Map{
-		items: make([]*Station, 1<<14),
+		items: make([]*Station, BucketSize),
 	}
 	return stations
 }
@@ -39,7 +41,7 @@ func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error
 
 	hash := fnv.New64()
 	hash.Write(name)
-	bucket := hash.Sum64() & (1<<14 - 1)
+	bucket := hash.Sum64() & (BucketSize - 1)
 
 	limit := 100
 	for limit > 0 {
@@ -56,10 +58,8 @@ func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error
 	}
 
 	if s.items[bucket] == nil {
-		nameCopy := make([]byte, len(name))
-		copy(nameCopy, name)
 		s.items[bucket] = &Station{
-			Name: nameCopy,
+			Name: bytes.Clone(name),
 			Min:  minTemp,
 			Max:  maxTemp,
 			Sum:  sumTemp,
@@ -79,7 +79,7 @@ func (s *Map) Set(name []byte, minTemp, maxTemp, sumTemp float64, num int) error
 func (s *Map) Get(name []byte) (*Station, error) {
 	hash := fnv.New64()
 	hash.Write(name)
-	bucket := hash.Sum64() & (1<<14 - 1)
+	bucket := hash.Sum64() & (BucketSize - 1)
 
 	limit := 100
 	// fmt.Printf("%s = %v\n", name, s.items[bucket])
