@@ -11,5 +11,5 @@ time: build
 test: build
 	./calc | delta --max-line-length 0 --diff-so-fancy averages.txt -
 
-profile:
+profile: time
 	go tool pprof -http=localhost:8080 calc1.prof
